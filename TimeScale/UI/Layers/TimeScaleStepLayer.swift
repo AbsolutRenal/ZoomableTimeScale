@@ -25,11 +25,13 @@ class TimeScaleStepLayer: CALayer {
     private let dotLayer = CALayer()
     private let dotReplicator = CAReplicatorLayer()
     private let timestampLayer = CATextLayer()
+    private var isFirst: Bool = false
 
 
     // MARK: LifeCycle
 
-    override init() {
+    init(isFirst: Bool) {
+        self.isFirst = isFirst
         super.init()
         setupLayers()
     }
@@ -47,13 +49,15 @@ class TimeScaleStepLayer: CALayer {
     override func layoutSublayers() {
         super.layoutSublayers()
 
+        let offsetForFirst = isFirst ? 0 : 1
         let nbDots = Int(frame.width / (Constants.minSpaceBetweenDots + Constants.dotSize))
-        dotReplicator.instanceCount = nbDots
+        let dotOffset = frame.width / CGFloat(nbDots)
+        dotReplicator.instanceCount = nbDots - offsetForFirst
         dotReplicator.instanceTransform = CATransform3DTranslate(CATransform3DIdentity,
-                                                                 frame.width / CGFloat(nbDots),
+                                                                 dotOffset,
                                                                  0,
                                                                  0)
-        dotLayer.position = CGPoint(x: 0,
+        dotLayer.position = CGPoint(x: dotOffset * CGFloat(offsetForFirst),
                                     y: frame.midY)
         updateTimestampLayerPosition()
     }

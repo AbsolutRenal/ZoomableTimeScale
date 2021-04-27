@@ -66,7 +66,7 @@ class TimeScaleLayer: CALayer {
 
         let timeOffset = timelineDuration / Double(instanceCount)
         for i in 0..<instanceCount {
-            let timeScaleStep = TimeScaleStepLayer()
+            let timeScaleStep = TimeScaleStepLayer(isFirst: i == 0)
             addSublayer(timeScaleStep)
 
             let time = timeOffset * Double(i+1)
