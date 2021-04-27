@@ -9,8 +9,7 @@ import UIKit
 
 class ViewController: UIViewController {
     private lazy var timeScale: TimeScaleView = {
-        let scale = TimeScaleView(pixelsPerSecond: Int(slider.value),
-                                  timelineDuration: timelineDuration)
+        let scale = TimeScaleView(mediaDuration: timelineDuration)
         return scale
     }()
     private let slider = UISlider()

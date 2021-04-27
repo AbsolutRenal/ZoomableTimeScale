@@ -14,8 +14,8 @@ class TimeScaleView: UIView {
     // MARK: Constants
 
     private enum Constants {
-        static let minInstanceWidth: CGFloat = 50
-        static let minDotSpacing: CGFloat = 25
+        static let minInstanceWidth: CGFloat = 40
+        static let minDotSpacing: CGFloat = 15
     }
 
     private enum TimeScaleMode {
@@ -28,7 +28,7 @@ class TimeScaleView: UIView {
     // MARK: Properties
 
     private let timeScaleLayer: TimeScaleLayer = TimeScaleLayer()
-    private var pixelsPerSecond: Int
+    private var pixelsPerSecond: Int = 0
     private var mediaDuration: TimeInterval
 
     private var scaleMode: TimeScaleMode {
@@ -52,10 +52,8 @@ class TimeScaleView: UIView {
 
     // MARK: LifeCycle
 
-    init(pixelsPerSecond: Int,
-         timelineDuration: TimeInterval) {
-        self.pixelsPerSecond = pixelsPerSecond
-        self.mediaDuration = timelineDuration
+    init(mediaDuration: TimeInterval) {
+        self.mediaDuration = mediaDuration
         super.init(frame: .zero)
         setupLayout()
     }
@@ -74,7 +72,9 @@ class TimeScaleView: UIView {
     // MARK: Public
 
     func updateScale(to pixelsPerSecond: Int) {
-        print("updateScale(to: \(pixelsPerSecond))")
+        guard pixelsPerSecond != self.pixelsPerSecond else {
+            return
+        }
         self.pixelsPerSecond = pixelsPerSecond
         let configuration = getScaleConfiguration()
         timeScaleLayer.update(instanceCount: configuration.nbInstances,
@@ -95,14 +95,17 @@ class TimeScaleView: UIView {
         case .multipleSeconds(let seconds):
             let nbInstances = Int((mediaDuration / Double(seconds)).rounded(.up))
             let scaleDuration = Double(nbInstances * seconds)
+            let nbDots = greatestDotsNumber(forInstanceCount: nbInstances,
+                                            in: [seconds])
             return (nbInstances: nbInstances,
-                    nbDots: 0,
+                    nbDots: nbDots,
                     scaleDuration: scaleDuration)
         case .second:
             let nbInstances = Int(mediaDuration.rounded(.up))
             let scaleDuration = (mediaDuration / Double(nbInstances)).rounded(.up) * Double(nbInstances)
             let nbDots = greatestDotsNumber(forInstanceCount: nbInstances,
-                                            in: [2, 4, 5])
+                                            in: [2, 4])
+//                                            in: [2, 4, 5])
             return (nbInstances: nbInstances,
                     nbDots: nbDots,
                     scaleDuration: scaleDuration)
@@ -110,7 +113,8 @@ class TimeScaleView: UIView {
             let nbInstances = Int(mediaDuration.rounded(.up)) * 2
             let scaleDuration = (mediaDuration / Double(nbInstances) * 0.5).rounded(.up) * Double(nbInstances) * 0.5
             let nbDots = greatestDotsNumber(forInstanceCount: nbInstances,
-                                            in: [2, 5])
+                                            in: [2])
+//                                            in: [2, 5])
             return (nbInstances: nbInstances,
                     nbDots: nbDots,
                     scaleDuration: scaleDuration)

@@ -40,7 +40,6 @@ class TimeScaleLayer: CALayer {
     func update(instanceCount: Int,
                 timescaleDuration: TimeInterval,
                 nbDots: Int) {
-        print("update(instanceCount:\(instanceCount), timescaleDuration:\(timescaleDuration)")
         self.instanceCount = instanceCount
         self.timelineDuration = timescaleDuration
         instantiateRequestedLayers()
@@ -62,9 +61,10 @@ class TimeScaleLayer: CALayer {
             guard var steps = timeScaleSteps else {
                 return
             }
-            repeat {
-                steps.removeLast().removeFromSuperlayer()
-            } while steps.count > instanceCount
+            while steps.count > instanceCount {
+                steps.last?.removeFromSuperlayer()
+                steps.removeLast()
+            }
         }
     }
 
@@ -77,8 +77,6 @@ class TimeScaleLayer: CALayer {
 
         for (idx, step) in timeScaleSteps.enumerated() {
             let time = timeOffset * Double(idx+1)
-            print("idx:\(idx) -> time:\(time)")
-//            step.setTimestamp(to: time.getHumanReadableString(omitStartingZero: false))
             step.configure(withTimeStamp: time.getHumanReadableString(omitStartingZero: false),
                            nbDots: nbDots)
         }

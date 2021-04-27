@@ -51,8 +51,10 @@ class TimeScaleStepLayer: CALayer {
         super.layoutSublayers()
 
         let offsetForFirst = isFirst ? 0 : 1
-//        let nbDots = Int(frame.width / (Constants.minSpaceBetweenDots + Constants.dotSize))
         let dotOffset = frame.width / CGFloat(nbDots)
+        guard !dotOffset.isInfinite else {
+            return
+        }
         dotReplicator.instanceCount = nbDots - offsetForFirst
         dotReplicator.instanceTransform = CATransform3DTranslate(CATransform3DIdentity,
                                                                  dotOffset,
@@ -79,6 +81,7 @@ class TimeScaleStepLayer: CALayer {
 
         timestampLayer.bounds = bounds
         self.nbDots = nbDots
+        dotLayer.isHidden = nbDots == 0
     }
 
 
