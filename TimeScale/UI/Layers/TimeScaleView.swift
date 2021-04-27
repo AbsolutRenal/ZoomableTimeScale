@@ -19,25 +19,25 @@ class TimeScaleView: UIView {
 
     // MARK: Properties
 
-    private var timeScaleLayer: TimeScaleLayer?
+    private let timeScaleLayer: TimeScaleLayer = TimeScaleLayer()
     private var pixelsPerSecond: Int
-    private var timelineDuration: TimeInterval
+    private var mediaDuration: TimeInterval
 
     private var nbInstances: Int {
         switch pixelsPerSecond {
         case let x where CGFloat(x) < Constants.minInstanceWidth:
             /// Several seconds per instance
             let occurenceDuration = (Constants.minInstanceWidth / CGFloat(x)).rounded(.up)
-            return Int((timelineDuration / Double(occurenceDuration)).rounded(.up))
+            return Int((mediaDuration / Double(occurenceDuration)).rounded(.up))
         case let x where CGFloat(x) < (Constants.minInstanceWidth * 2):
             /// One second per instance
-            return Int(timelineDuration.rounded(.up))
+            return Int(mediaDuration.rounded(.up))
         case let x where CGFloat(x) < (Constants.minInstanceWidth * 4):
             /// Half a second per instance
-        return Int((timelineDuration * 2).rounded(.up))
+        return Int((mediaDuration * 2).rounded(.up))
         default:
             /// Quarter a second per instance
-            return Int((timelineDuration * 4).rounded(.up))
+            return Int((mediaDuration * 4).rounded(.up))
         }
     }
 
@@ -51,7 +51,7 @@ class TimeScaleView: UIView {
     init(pixelsPerSecond: Int,
          timelineDuration: TimeInterval) {
         self.pixelsPerSecond = pixelsPerSecond
-        self.timelineDuration = timelineDuration
+        self.mediaDuration = timelineDuration
         super.init(frame: .zero)
         setupLayout()
     }
@@ -63,25 +63,26 @@ class TimeScaleView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        timeScaleLayer?.frame = bounds
+        timeScaleLayer.frame = bounds
     }
 
 
     // MARK: Public
 
     func updateScale(to pixelsPerSecond: Int) {
+        print("updateScale(to: \(pixelsPerSecond))")
         self.pixelsPerSecond = pixelsPerSecond
-        timeScaleLayer?.setInstancesCount(to: nbInstances)
+        let instanceCount = nbInstances
+        let timeScaleDuration = (mediaDuration / Double(instanceCount)).rounded(.up) * Double(instanceCount)
+        timeScaleLayer.update(instanceCount: instanceCount,
+                              timescaleDuration: timeScaleDuration)
     }
 
 
     // MARK: Private
 
     private func setupLayout() {
-        let timeScale = TimeScaleLayer(withDuration: timelineDuration,
-                                       nbInstances: nbInstances)
-        layer.addSublayer(timeScale)
-
-        timeScaleLayer = timeScale
+        timeScaleLayer.contentsScale = UIScreen.main.scale
+        layer.addSublayer(timeScaleLayer)
     }
 }

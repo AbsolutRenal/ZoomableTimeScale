@@ -15,7 +15,7 @@ class ViewController: UIViewController {
     }()
     private let slider = UISlider()
     private var timeScaleWithConstraint: NSLayoutConstraint?
-    private let timelineDuration: TimeInterval = 58.32
+    private let timelineDuration: TimeInterval = 5.87
 
     override func viewDidLoad() {
         super.viewDidLoad()
