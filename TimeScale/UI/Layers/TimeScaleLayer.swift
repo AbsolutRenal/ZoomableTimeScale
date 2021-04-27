@@ -19,8 +19,8 @@ class TimeScaleLayer: CALayer {
     // MARK: LifeCycle
 
     override init(layer: Any) {
-        self.timelineDuration = 90
-        self.instanceCount = 2
+        self.timelineDuration = -1
+        self.instanceCount = 0
         super.init(layer: layer)
         setupLayers()
     }
@@ -37,9 +37,6 @@ class TimeScaleLayer: CALayer {
         fatalError("init(coder:) has not been implemented")
     }
 
-
-    // MARK: Public
-
     override func layoutSublayers() {
         super.layoutSublayers()
 
@@ -54,6 +51,14 @@ class TimeScaleLayer: CALayer {
                                      width: stepSize,
                                      height: bounds.height)
         }
+    }
+
+
+    // MARK: Public
+
+    func setInstancesCount(to count: Int) {
+        instanceCount = count
+        setupLayers()
     }
 
 

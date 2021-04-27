@@ -8,9 +8,14 @@
 import UIKit
 
 class ViewController: UIViewController {
-    let timeScale = TimeScaleView()
-    let slider = UISlider()
+    private lazy var timeScale: TimeScaleView = {
+        let scale = TimeScaleView(pixelsPerSecond: Int(slider.value),
+                                  timelineDuration: timelineDuration)
+        return scale
+    }()
+    private let slider = UISlider()
     private var timeScaleWithConstraint: NSLayoutConstraint?
+    private let timelineDuration: TimeInterval = 58.32
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,9 +26,9 @@ class ViewController: UIViewController {
 
     private func setup() {
         slider.addTarget(self, action: #selector(sliderDidChange), for: .valueChanged)
-        slider.minimumValue = 0.1
-        slider.maximumValue = 1
-        slider.value = 1
+        slider.minimumValue = 15
+        slider.maximumValue = 200
+        slider.value = 50
 
         view.addSubview(slider)
         view.addSubview(timeScale)
@@ -46,7 +51,9 @@ class ViewController: UIViewController {
     }
 
     @objc private func sliderDidChange() {
-        timeScaleWithConstraint?.constant = view.frame.width * CGFloat(slider.value)
+        let pxPerSeconds = Int(slider.value)
+        timeScale.updateScale(to: pxPerSeconds)
+        timeScaleWithConstraint?.constant = CGFloat(timelineDuration) * CGFloat(pxPerSeconds)
     }
 
     override func viewWillAppear(_ animated: Bool) {
