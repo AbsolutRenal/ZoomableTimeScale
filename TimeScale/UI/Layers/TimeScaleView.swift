@@ -8,14 +8,14 @@
 import Foundation
 import UIKit
 
+typealias TimeScaleConfiguration = (nbInstances: Int, nbDots: Int, scaleDuration: TimeInterval, secondFraction: Bool)
 class TimeScaleView: UIView {
-    typealias TimeScaleConfiguration = (nbInstances: Int, nbDots: Int, scaleDuration: TimeInterval)
 
     // MARK: Constants
 
     private enum Constants {
         static let minInstanceWidth: CGFloat = 40
-        static let minDotSpacing: CGFloat = 15
+        static let minDotSpacing: CGFloat = 20
     }
 
     private enum TimeScaleMode {
@@ -23,6 +23,14 @@ class TimeScaleView: UIView {
         case second
         case halfSecond
         case quarterSecond
+
+        var displaySecondFraction: Bool {
+            switch self {
+            case .halfSecond,
+                 .quarterSecond: return true
+            default: return false
+            }
+        }
     }
 
     // MARK: Properties
@@ -37,10 +45,10 @@ class TimeScaleView: UIView {
             /// Several seconds per instance
             let occurenceDuration = (Constants.minInstanceWidth / CGFloat(x)).rounded(.up)
             return .multipleSeconds(Int(occurenceDuration))
-        case let x where CGFloat(x) < (Constants.minInstanceWidth * 2):
+        case let x where CGFloat(x) < (Constants.minInstanceWidth * 3):
             /// One second per instance
             return .second
-        case let x where CGFloat(x) < (Constants.minInstanceWidth * 4):
+        case let x where CGFloat(x) < (Constants.minInstanceWidth * 10):
             /// Half a second per instance
             return .halfSecond
         default:
@@ -77,9 +85,7 @@ class TimeScaleView: UIView {
         }
         self.pixelsPerSecond = pixelsPerSecond
         let configuration = getScaleConfiguration()
-        timeScaleLayer.update(instanceCount: configuration.nbInstances,
-                              timescaleDuration: configuration.scaleDuration,
-                              nbDots: configuration.nbDots)
+        timeScaleLayer.update(configuration: configuration)
     }
 
 
@@ -99,7 +105,8 @@ class TimeScaleView: UIView {
                                             in: [seconds])
             return (nbInstances: nbInstances,
                     nbDots: nbDots,
-                    scaleDuration: scaleDuration)
+                    scaleDuration: scaleDuration,
+                    secondFraction: false)
         case .second:
             let nbInstances = Int(mediaDuration.rounded(.up))
             let scaleDuration = (mediaDuration / Double(nbInstances)).rounded(.up) * Double(nbInstances)
@@ -108,16 +115,18 @@ class TimeScaleView: UIView {
 //                                            in: [2, 4, 5])
             return (nbInstances: nbInstances,
                     nbDots: nbDots,
-                    scaleDuration: scaleDuration)
+                    scaleDuration: scaleDuration,
+                    secondFraction: false)
         case .halfSecond:
             let nbInstances = Int(mediaDuration.rounded(.up)) * 2
             let scaleDuration = (mediaDuration / Double(nbInstances) * 0.5).rounded(.up) * Double(nbInstances) * 0.5
             let nbDots = greatestDotsNumber(forInstanceCount: nbInstances,
-                                            in: [2])
-//                                            in: [2, 5])
+//                                            in: [2])
+                                            in: [2, 5])
             return (nbInstances: nbInstances,
                     nbDots: nbDots,
-                    scaleDuration: scaleDuration)
+                    scaleDuration: scaleDuration,
+                    secondFraction: true)
         case .quarterSecond:
             let nbInstances = Int(mediaDuration.rounded(.up)) * 4
             let scaleDuration = (mediaDuration / Double(nbInstances) * 0.25).rounded(.up) * Double(nbInstances) * 0.25
@@ -125,7 +134,8 @@ class TimeScaleView: UIView {
                                             in: [5])
             return (nbInstances: nbInstances,
                     nbDots: nbDots,
-                    scaleDuration: scaleDuration)
+                    scaleDuration: scaleDuration,
+                    secondFraction: true)
         }
     }
 

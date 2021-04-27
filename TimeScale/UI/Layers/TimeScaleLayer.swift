@@ -37,13 +37,12 @@ class TimeScaleLayer: CALayer {
 
     // MARK: Public
 
-    func update(instanceCount: Int,
-                timescaleDuration: TimeInterval,
-                nbDots: Int) {
-        self.instanceCount = instanceCount
-        self.timelineDuration = timescaleDuration
+    func update(configuration: TimeScaleConfiguration) {
+        self.instanceCount = configuration.nbInstances
+        self.timelineDuration = configuration.scaleDuration
         instantiateRequestedLayers()
-        updateSubLayers(withNbDots: nbDots)
+        updateSubLayers(withNbDots: configuration.nbDots,
+                        displayFractions: configuration.secondFraction)
     }
 
 
@@ -68,7 +67,8 @@ class TimeScaleLayer: CALayer {
         }
     }
 
-    private func updateSubLayers(withNbDots nbDots: Int) {
+    private func updateSubLayers(withNbDots nbDots: Int,
+                                 displayFractions: Bool) {
         guard let timeScaleSteps = sublayers?.compactMap({ $0 as? TimeScaleStepLayer }) else {
             return
         }
@@ -77,7 +77,7 @@ class TimeScaleLayer: CALayer {
 
         for (idx, step) in timeScaleSteps.enumerated() {
             let time = timeOffset * Double(idx+1)
-            step.configure(withTimeStamp: time.getHumanReadableString(omitStartingZero: false),
+            step.configure(withTimeStamp: time.getTimeScaleString(displaySecondFraction: displayFractions),
                            nbDots: nbDots)
         }
     }

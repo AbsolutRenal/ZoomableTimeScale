@@ -26,7 +26,7 @@ class ViewController: UIViewController {
     private func setup() {
         slider.addTarget(self, action: #selector(sliderDidChange), for: .valueChanged)
         slider.minimumValue = 15
-        slider.maximumValue = 200
+        slider.maximumValue = 800
         slider.value = 50
 
         view.addSubview(slider)
@@ -95,6 +95,23 @@ public extension TimeInterval {
             return String(format: "%0.2d:%0.2d", minutes, seconds)
         } else {
             return String(format: "%\(firstComponentFormat):%0.2d", minutes, seconds)
+        }
+    }
+
+    func getTimeScaleString(displaySecondFraction: Bool) -> String {
+        guard !self.isNaN && self.isFinite else {
+            return "0:00"
+        }
+
+        let interval = Int(self)
+        let secondFraction = Int((self.truncatingRemainder(dividingBy: 1) * 100).rounded(.toNearestOrEven))
+        let seconds = interval % 60
+        let minutes = (interval / 60) % 60
+
+        if displaySecondFraction {
+            return String(format: "%0.2d:%0.2d.%0.2d", minutes, seconds, secondFraction)
+        } else {
+            return String(format: "%0.2d:%0.2d", minutes, seconds)
         }
     }
 }
