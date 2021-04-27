@@ -38,20 +38,17 @@ class TimeScaleLayer: CALayer {
     // MARK: Public
 
     func update(instanceCount: Int,
-                timescaleDuration: TimeInterval) {
+                timescaleDuration: TimeInterval,
+                nbDots: Int) {
         print("update(instanceCount:\(instanceCount), timescaleDuration:\(timescaleDuration)")
         self.instanceCount = instanceCount
         self.timelineDuration = timescaleDuration
-        setupLayout()
+        instantiateRequestedLayers()
+        updateSubLayers(withNbDots: nbDots)
     }
 
 
     // MARK: Private
-
-    private func setupLayout() {
-        instantiateRequestedLayers()
-        updateLayersTimeStamps()
-    }
 
     private func instantiateRequestedLayers() {
         let timeScaleSteps = sublayers?.compactMap({ $0 as? TimeScaleStepLayer })
@@ -71,7 +68,7 @@ class TimeScaleLayer: CALayer {
         }
     }
 
-    private func updateLayersTimeStamps() {
+    private func updateSubLayers(withNbDots nbDots: Int) {
         guard let timeScaleSteps = sublayers?.compactMap({ $0 as? TimeScaleStepLayer }) else {
             return
         }
@@ -81,7 +78,9 @@ class TimeScaleLayer: CALayer {
         for (idx, step) in timeScaleSteps.enumerated() {
             let time = timeOffset * Double(idx+1)
             print("idx:\(idx) -> time:\(time)")
-            step.setTimestamp(to: time.getHumanReadableString(omitStartingZero: false))
+//            step.setTimestamp(to: time.getHumanReadableString(omitStartingZero: false))
+            step.configure(withTimeStamp: time.getHumanReadableString(omitStartingZero: false),
+                           nbDots: nbDots)
         }
     }
 }

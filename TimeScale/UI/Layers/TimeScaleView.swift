@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 
 class TimeScaleView: UIView {
+    typealias TimeScaleConfiguration = (nbInstances: Int, nbDots: Int, scaleDuration: TimeInterval)
 
     // MARK: Constants
 
@@ -17,33 +18,36 @@ class TimeScaleView: UIView {
         static let minDotSpacing: CGFloat = 25
     }
 
+    private enum TimeScaleMode {
+        case multipleSeconds(Int)
+        case second
+        case halfSecond
+        case quarterSecond
+    }
+
     // MARK: Properties
 
     private let timeScaleLayer: TimeScaleLayer = TimeScaleLayer()
     private var pixelsPerSecond: Int
     private var mediaDuration: TimeInterval
 
-    private var nbInstances: Int {
+    private var scaleMode: TimeScaleMode {
         switch pixelsPerSecond {
         case let x where CGFloat(x) < Constants.minInstanceWidth:
             /// Several seconds per instance
             let occurenceDuration = (Constants.minInstanceWidth / CGFloat(x)).rounded(.up)
-            return Int((mediaDuration / Double(occurenceDuration)).rounded(.up))
+            return .multipleSeconds(Int(occurenceDuration))
         case let x where CGFloat(x) < (Constants.minInstanceWidth * 2):
             /// One second per instance
-            return Int(mediaDuration.rounded(.up))
+            return .second
         case let x where CGFloat(x) < (Constants.minInstanceWidth * 4):
             /// Half a second per instance
-        return Int((mediaDuration * 2).rounded(.up))
+            return .halfSecond
         default:
             /// Quarter a second per instance
-            return Int((mediaDuration * 4).rounded(.up))
+            return .quarterSecond
         }
     }
-
-//    private var nbDotsPerInstance: Int {
-//        return 2
-//    }
 
 
     // MARK: LifeCycle
@@ -72,10 +76,10 @@ class TimeScaleView: UIView {
     func updateScale(to pixelsPerSecond: Int) {
         print("updateScale(to: \(pixelsPerSecond))")
         self.pixelsPerSecond = pixelsPerSecond
-        let instanceCount = nbInstances
-        let timeScaleDuration = (mediaDuration / Double(instanceCount)).rounded(.up) * Double(instanceCount)
-        timeScaleLayer.update(instanceCount: instanceCount,
-                              timescaleDuration: timeScaleDuration)
+        let configuration = getScaleConfiguration()
+        timeScaleLayer.update(instanceCount: configuration.nbInstances,
+                              timescaleDuration: configuration.scaleDuration,
+                              nbDots: configuration.nbDots)
     }
 
 
@@ -84,5 +88,49 @@ class TimeScaleView: UIView {
     private func setupLayout() {
         timeScaleLayer.contentsScale = UIScreen.main.scale
         layer.addSublayer(timeScaleLayer)
+    }
+
+    private func getScaleConfiguration() -> TimeScaleConfiguration {
+        switch scaleMode {
+        case .multipleSeconds(let seconds):
+            let nbInstances = Int((mediaDuration / Double(seconds)).rounded(.up))
+            let scaleDuration = Double(nbInstances * seconds)
+            return (nbInstances: nbInstances,
+                    nbDots: 0,
+                    scaleDuration: scaleDuration)
+        case .second:
+            let nbInstances = Int(mediaDuration.rounded(.up))
+            let scaleDuration = (mediaDuration / Double(nbInstances)).rounded(.up) * Double(nbInstances)
+            let nbDots = greatestDotsNumber(forInstanceCount: nbInstances,
+                                            in: [2, 4, 5])
+            return (nbInstances: nbInstances,
+                    nbDots: nbDots,
+                    scaleDuration: scaleDuration)
+        case .halfSecond:
+            let nbInstances = Int(mediaDuration.rounded(.up)) * 2
+            let scaleDuration = (mediaDuration / Double(nbInstances) * 0.5).rounded(.up) * Double(nbInstances) * 0.5
+            let nbDots = greatestDotsNumber(forInstanceCount: nbInstances,
+                                            in: [2, 5])
+            return (nbInstances: nbInstances,
+                    nbDots: nbDots,
+                    scaleDuration: scaleDuration)
+        case .quarterSecond:
+            let nbInstances = Int(mediaDuration.rounded(.up)) * 4
+            let scaleDuration = (mediaDuration / Double(nbInstances) * 0.25).rounded(.up) * Double(nbInstances) * 0.25
+            let nbDots = greatestDotsNumber(forInstanceCount: nbInstances,
+                                            in: [5])
+            return (nbInstances: nbInstances,
+                    nbDots: nbDots,
+                    scaleDuration: scaleDuration)
+        }
+    }
+
+    private func greatestDotsNumber(forInstanceCount count: Int,
+                                    in possibleValues: [Int]) -> Int {
+        let instanceSize = frame.width / CGFloat(count)
+        let possibleValuesSortedDecreaseOrder = possibleValues.sorted(by: >)
+        return possibleValuesSortedDecreaseOrder.first {
+            instanceSize / CGFloat($0) >= Constants.minDotSpacing
+        } ?? possibleValuesSortedDecreaseOrder.last ?? 0
     }
 }

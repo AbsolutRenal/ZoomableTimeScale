@@ -26,6 +26,7 @@ class TimeScaleStepLayer: CALayer {
     private let dotReplicator = CAReplicatorLayer()
     private let timestampLayer = CATextLayer()
     private var isFirst: Bool = false
+    private var nbDots: Int = 0
 
 
     // MARK: LifeCycle
@@ -50,7 +51,7 @@ class TimeScaleStepLayer: CALayer {
         super.layoutSublayers()
 
         let offsetForFirst = isFirst ? 0 : 1
-        let nbDots = Int(frame.width / (Constants.minSpaceBetweenDots + Constants.dotSize))
+//        let nbDots = Int(frame.width / (Constants.minSpaceBetweenDots + Constants.dotSize))
         let dotOffset = frame.width / CGFloat(nbDots)
         dotReplicator.instanceCount = nbDots - offsetForFirst
         dotReplicator.instanceTransform = CATransform3DTranslate(CATransform3DIdentity,
@@ -65,7 +66,8 @@ class TimeScaleStepLayer: CALayer {
 
     // MARK: Public
 
-    func setTimestamp(to timestamp: String) {
+    func configure(withTimeStamp timestamp: String,
+                   nbDots: Int) {
         timestampLayer.string = timestamp
         guard let bounds = (timestampLayer.string as? NSString)?.boundingRect(with: CGSize(width: .greatestFiniteMagnitude,
                                                                                            height: (Constants.font.pointSize+1) * 0.5),
@@ -76,6 +78,7 @@ class TimeScaleStepLayer: CALayer {
         }
 
         timestampLayer.bounds = bounds
+        self.nbDots = nbDots
     }
 
 
