@@ -35,7 +35,7 @@ class TimeScaleView: UIView {
 
     // MARK: Properties
 
-    private var pixelsPerSecond: Int = 0
+    private var pixelsPerSecond: CGFloat = 0
     private var mediaDuration: TimeInterval
 
     private var scaleMode: TimeScaleMode = .second
@@ -74,7 +74,7 @@ class TimeScaleView: UIView {
 
     // MARK: Public
 
-    func updateScale(to pixelsPerSecond: Int) {
+    func updateScale(to pixelsPerSecond: CGFloat) {
         guard pixelsPerSecond != self.pixelsPerSecond else {
             return
         }
@@ -101,18 +101,18 @@ class TimeScaleView: UIView {
                                 forCellWithReuseIdentifier: String(describing: TimeScaleStepCell.self))
     }
 
-    private func updateScaleMode(with pixelsPerSecond: Int) {
+    private func updateScaleMode(with pixelsPerSecond: CGFloat) {
         self.pixelsPerSecond = pixelsPerSecond
 
         switch pixelsPerSecond {
-        case let x where CGFloat(x) < Constants.minInstanceWidth:
+        case let x where x < Constants.minInstanceWidth:
             /// Several seconds per instance
             let occurenceDuration = (Constants.minInstanceWidth / CGFloat(x)).rounded(.up)
             scaleMode = .multipleSeconds(Int(occurenceDuration))
-        case let x where CGFloat(x) < (Constants.minInstanceWidth * 3):
+        case let x where x < (Constants.minInstanceWidth * 3):
             /// One second per instance
             scaleMode =  .second
-        case let x where CGFloat(x) < (Constants.minInstanceWidth * 10):
+        case let x where x < (Constants.minInstanceWidth * 10):
             /// Half a second per instance
             scaleMode =  .halfSecond
         default:

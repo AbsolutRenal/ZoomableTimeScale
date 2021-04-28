@@ -47,7 +47,7 @@ class ViewController: UIViewController {
     }
 
     @objc private func sliderDidChange() {
-        let pxPerSeconds = Int(slider.value)
+        let pxPerSeconds = CGFloat(slider.value)
         timeScale.updateScale(to: pxPerSeconds)
     }
 
