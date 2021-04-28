@@ -16,6 +16,7 @@
 		119193732638109800AD4A76 /* TimeScaleStepLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 119193722638109800AD4A76 /* TimeScaleStepLayer.swift */; };
 		11919377263810AD00AD4A76 /* TimeScaleLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11919376263810AD00AD4A76 /* TimeScaleLayer.swift */; };
 		1191937A263810BC00AD4A76 /* TimeScaleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11919379263810BC00AD4A76 /* TimeScaleView.swift */; };
+		11B0E59A26395EF00021BAEE /* TimeScaleStepCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B0E59926395EF00021BAEE /* TimeScaleStepCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		119193722638109800AD4A76 /* TimeScaleStepLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeScaleStepLayer.swift; sourceTree = "<group>"; };
 		11919376263810AD00AD4A76 /* TimeScaleLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeScaleLayer.swift; sourceTree = "<group>"; };
 		11919379263810BC00AD4A76 /* TimeScaleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeScaleView.swift; sourceTree = "<group>"; };
+		11B0E59926395EF00021BAEE /* TimeScaleStepCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeScaleStepCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +88,7 @@
 			isa = PBXGroup;
 			children = (
 				119193722638109800AD4A76 /* TimeScaleStepLayer.swift */,
+				11B0E59926395EF00021BAEE /* TimeScaleStepCell.swift */,
 				11919376263810AD00AD4A76 /* TimeScaleLayer.swift */,
 				11919379263810BC00AD4A76 /* TimeScaleView.swift */,
 			);
@@ -168,6 +171,7 @@
 				1191935C263805B000AD4A76 /* AppDelegate.swift in Sources */,
 				1191935E263805B000AD4A76 /* SceneDelegate.swift in Sources */,
 				119193732638109800AD4A76 /* TimeScaleStepLayer.swift in Sources */,
+				11B0E59A26395EF00021BAEE /* TimeScaleStepCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -315,13 +319,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = R2EXFBAHGS;
+				DEVELOPMENT_TEAM = 5R97Y7Q7FD;
 				INFOPLIST_FILE = TimeScale/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.renal.TimeScale;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gopro.TimeScale;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -334,13 +338,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = R2EXFBAHGS;
+				DEVELOPMENT_TEAM = 5R97Y7Q7FD;
 				INFOPLIST_FILE = TimeScale/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.renal.TimeScale;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gopro.TimeScale;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

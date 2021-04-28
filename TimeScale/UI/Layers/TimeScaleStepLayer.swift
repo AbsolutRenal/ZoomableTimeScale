@@ -15,7 +15,6 @@ class TimeScaleStepLayer: CALayer {
     private enum Constants {
         static let tintColor: CGColor = UIColor.darkGray.cgColor
         static let dotSize: CGFloat = 2
-        static let minSpaceBetweenDots: CGFloat = 15
         static let font: UIFont = UIFont.systemFont(ofSize: 9)
     }
 
