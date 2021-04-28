@@ -47,6 +47,7 @@ class TimeScaleView: UIView {
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 0
         let collection = UICollectionView(frame: .zero,
                                           collectionViewLayout: layout)
         collection.allowsSelection = false
