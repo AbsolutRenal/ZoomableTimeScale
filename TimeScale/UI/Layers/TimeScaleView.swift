@@ -35,27 +35,28 @@ class TimeScaleView: UIView {
 
     // MARK: Properties
 
-    private let timeScaleLayer: TimeScaleLayer = TimeScaleLayer()
-    private var pixelsPerSecond: Int = 0
+    private var pixelsPerSecond: CGFloat = 0
     private var mediaDuration: TimeInterval
 
-    private var scaleMode: TimeScaleMode {
-        switch pixelsPerSecond {
-        case let x where CGFloat(x) < Constants.minInstanceWidth:
-            /// Several seconds per instance
-            let occurenceDuration = (Constants.minInstanceWidth / CGFloat(x)).rounded(.up)
-            return .multipleSeconds(Int(occurenceDuration))
-        case let x where CGFloat(x) < (Constants.minInstanceWidth * 3):
-            /// One second per instance
-            return .second
-        case let x where CGFloat(x) < (Constants.minInstanceWidth * 10):
-            /// Half a second per instance
-            return .halfSecond
-        default:
-            /// Quarter a second per instance
-            return .quarterSecond
-        }
-    }
+    private var scaleMode: TimeScaleMode = .second
+    private var scaleConfiguration: TimeScaleConfiguration = (nbInstances: 0,
+                                                              nbDots: 0,
+                                                              scaleDuration: 0,
+                                                              secondFraction: false)
+
+    private lazy var collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 0
+        let collection = UICollectionView(frame: .zero,
+                                          collectionViewLayout: layout)
+        collection.allowsSelection = false
+        collection.dataSource = self
+        collection.delegate = self
+        collection.backgroundColor = .clear
+        collection.showsHorizontalScrollIndicator = false
+        return collection
+    }()
 
 
     // MARK: LifeCycle
@@ -70,81 +71,139 @@ class TimeScaleView: UIView {
         fatalError("Not implemented")
     }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
-
-        timeScaleLayer.frame = bounds
-    }
-
 
     // MARK: Public
 
-    func updateScale(to pixelsPerSecond: Int) {
+    func updateScale(to pixelsPerSecond: CGFloat) {
         guard pixelsPerSecond != self.pixelsPerSecond else {
             return
         }
-        self.pixelsPerSecond = pixelsPerSecond
-        let configuration = getScaleConfiguration()
-        timeScaleLayer.update(configuration: configuration)
+        updateScaleMode(with: pixelsPerSecond)
+        updateScaleConfiguration()
+        collectionView.reloadData()
     }
 
 
     // MARK: Private
 
     private func setupLayout() {
-        timeScaleLayer.contentsScale = UIScreen.main.scale
-        layer.addSublayer(timeScaleLayer)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(collectionView)
+
+        NSLayoutConstraint.activate([
+            collectionView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            collectionView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            collectionView.topAnchor.constraint(equalTo: topAnchor)
+        ])
+
+        collectionView.register(TimeScaleStepCell.self,
+                                forCellWithReuseIdentifier: String(describing: TimeScaleStepCell.self))
     }
 
-    private func getScaleConfiguration() -> TimeScaleConfiguration {
+    private func updateScaleMode(with pixelsPerSecond: CGFloat) {
+        self.pixelsPerSecond = pixelsPerSecond
+
+        switch pixelsPerSecond {
+        case let x where x < Constants.minInstanceWidth:
+            /// Several seconds per instance
+            let occurenceDuration = (Constants.minInstanceWidth / CGFloat(x)).rounded(.up)
+            scaleMode = .multipleSeconds(Int(occurenceDuration))
+        case let x where x < (Constants.minInstanceWidth * 3):
+            /// One second per instance
+            scaleMode =  .second
+        case let x where x < (Constants.minInstanceWidth * 10):
+            /// Half a second per instance
+            scaleMode =  .halfSecond
+        default:
+            /// Quarter a second per instance
+            scaleMode =  .quarterSecond
+        }
+    }
+
+    private func updateScaleConfiguration() {
         switch scaleMode {
         case .multipleSeconds(let seconds):
             let nbInstances = Int((mediaDuration / Double(seconds)).rounded(.up))
             let scaleDuration = Double(nbInstances * seconds)
             let nbDots = greatestDotsNumber(forInstanceCount: nbInstances,
                                             in: [seconds])
-            return (nbInstances: nbInstances,
-                    nbDots: nbDots,
-                    scaleDuration: scaleDuration,
-                    secondFraction: false)
+            scaleConfiguration = (nbInstances: nbInstances,
+                                  nbDots: nbDots,
+                                  scaleDuration: scaleDuration,
+                                  secondFraction: false)
         case .second:
             let nbInstances = Int(mediaDuration.rounded(.up))
             let scaleDuration = (mediaDuration / Double(nbInstances)).rounded(.up) * Double(nbInstances)
             let nbDots = greatestDotsNumber(forInstanceCount: nbInstances,
                                             in: [2, 4])
 //                                            in: [2, 4, 5])
-            return (nbInstances: nbInstances,
-                    nbDots: nbDots,
-                    scaleDuration: scaleDuration,
-                    secondFraction: false)
+            scaleConfiguration = (nbInstances: nbInstances,
+                                  nbDots: nbDots,
+                                  scaleDuration: scaleDuration,
+                                  secondFraction: false)
         case .halfSecond:
             let nbInstances = Int(mediaDuration.rounded(.up)) * 2
             let scaleDuration = (mediaDuration / Double(nbInstances) * 0.5).rounded(.up) * Double(nbInstances) * 0.5
             let nbDots = greatestDotsNumber(forInstanceCount: nbInstances,
 //                                            in: [2])
                                             in: [2, 5])
-            return (nbInstances: nbInstances,
-                    nbDots: nbDots,
-                    scaleDuration: scaleDuration,
-                    secondFraction: true)
+            scaleConfiguration = (nbInstances: nbInstances,
+                                  nbDots: nbDots,
+                                  scaleDuration: scaleDuration,
+                                  secondFraction: true)
         case .quarterSecond:
             let nbInstances = Int(mediaDuration.rounded(.up)) * 4
             let scaleDuration = (mediaDuration / Double(nbInstances) * 0.25).rounded(.up) * Double(nbInstances) * 0.25
             let nbDots = greatestDotsNumber(forInstanceCount: nbInstances,
                                             in: [5])
-            return (nbInstances: nbInstances,
-                    nbDots: nbDots,
-                    scaleDuration: scaleDuration,
-                    secondFraction: true)
+            scaleConfiguration = (nbInstances: nbInstances,
+                                  nbDots: nbDots,
+                                  scaleDuration: scaleDuration,
+                                  secondFraction: true)
         }
     }
 
     private func greatestDotsNumber(forInstanceCount count: Int,
                                     in possibleValues: [Int]) -> Int {
-        let instanceSize = frame.width / CGFloat(count)
+//        let instanceSize = frame.width / CGFloat(count)
+        let instanceSize = collectionView(collectionView,
+                                          layout: collectionView.collectionViewLayout,
+                                          sizeForItemAt: IndexPath(item: 0, section: 0)).width
         let possibleValuesSortedDecreaseOrder = possibleValues.sorted(by: >)
         return possibleValuesSortedDecreaseOrder.first {
             instanceSize / CGFloat($0) >= Constants.minDotSpacing
         } ?? possibleValuesSortedDecreaseOrder.last ?? 0
+    }
+}
+
+extension TimeScaleView: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let nb = CGFloat(Double(scaleConfiguration.nbInstances) * mediaDuration / scaleConfiguration.scaleDuration)
+        let instanceSize = CGFloat(mediaDuration * Double(pixelsPerSecond)) / nb
+        return CGSize(width: instanceSize,
+                      height: bounds.height)
+    }
+}
+
+extension TimeScaleView: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView,
+                        numberOfItemsInSection section: Int) -> Int {
+        return scaleConfiguration.nbInstances
+    }
+
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: TimeScaleStepCell.self),
+                                                            for: indexPath) as? TimeScaleStepCell else {
+            return UICollectionViewCell()
+        }
+        let timestamp: TimeInterval = scaleConfiguration.scaleDuration / Double(scaleConfiguration.nbInstances) * Double(indexPath.row+1)
+        cell.configure(with: timestamp.getTimeScaleString(displaySecondFraction: scaleConfiguration.secondFraction),
+                       nbDots: scaleConfiguration.nbDots,
+                       isFirst: indexPath.row == 0)
+        return cell
     }
 }
