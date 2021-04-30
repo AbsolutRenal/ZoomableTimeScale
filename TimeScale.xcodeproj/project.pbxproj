@@ -13,8 +13,6 @@
 		11919363263805B000AD4A76 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 11919361263805B000AD4A76 /* Main.storyboard */; };
 		11919365263805B400AD4A76 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 11919364263805B400AD4A76 /* Assets.xcassets */; };
 		11919368263805B400AD4A76 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 11919366263805B400AD4A76 /* LaunchScreen.storyboard */; };
-		119193732638109800AD4A76 /* TimeScaleStepLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 119193722638109800AD4A76 /* TimeScaleStepLayer.swift */; };
-		11919377263810AD00AD4A76 /* TimeScaleLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11919376263810AD00AD4A76 /* TimeScaleLayer.swift */; };
 		1191937A263810BC00AD4A76 /* TimeScaleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11919379263810BC00AD4A76 /* TimeScaleView.swift */; };
 		11B0E59A26395EF00021BAEE /* TimeScaleStepCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B0E59926395EF00021BAEE /* TimeScaleStepCell.swift */; };
 /* End PBXBuildFile section */
@@ -28,8 +26,6 @@
 		11919364263805B400AD4A76 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		11919367263805B400AD4A76 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		11919369263805B400AD4A76 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		119193722638109800AD4A76 /* TimeScaleStepLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeScaleStepLayer.swift; sourceTree = "<group>"; };
-		11919376263810AD00AD4A76 /* TimeScaleLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeScaleLayer.swift; sourceTree = "<group>"; };
 		11919379263810BC00AD4A76 /* TimeScaleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeScaleView.swift; sourceTree = "<group>"; };
 		11B0E59926395EF00021BAEE /* TimeScaleStepCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeScaleStepCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -87,9 +83,7 @@
 		119193712638108A00AD4A76 /* Layers */ = {
 			isa = PBXGroup;
 			children = (
-				119193722638109800AD4A76 /* TimeScaleStepLayer.swift */,
 				11B0E59926395EF00021BAEE /* TimeScaleStepCell.swift */,
-				11919376263810AD00AD4A76 /* TimeScaleLayer.swift */,
 				11919379263810BC00AD4A76 /* TimeScaleView.swift */,
 			);
 			path = Layers;
@@ -166,11 +160,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				1191937A263810BC00AD4A76 /* TimeScaleView.swift in Sources */,
-				11919377263810AD00AD4A76 /* TimeScaleLayer.swift in Sources */,
 				11919360263805B000AD4A76 /* ViewController.swift in Sources */,
 				1191935C263805B000AD4A76 /* AppDelegate.swift in Sources */,
 				1191935E263805B000AD4A76 /* SceneDelegate.swift in Sources */,
-				119193732638109800AD4A76 /* TimeScaleStepLayer.swift in Sources */,
 				11B0E59A26395EF00021BAEE /* TimeScaleStepCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
