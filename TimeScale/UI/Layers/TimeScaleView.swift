@@ -16,6 +16,7 @@ class TimeScaleView: UIView {
     private enum Constants {
         static let minInstanceWidth: CGFloat = 40
         static let minDotSpacing: CGFloat = 20
+        static let minSingleSpacing: CGFloat = 10
     }
 
     private enum TimeScaleMode {
@@ -177,14 +178,17 @@ class TimeScaleView: UIView {
 
     private func greatestDotsNumber(forInstanceCount count: Int,
                                     in possibleValues: [Int]) -> Int {
-//        let instanceSize = frame.width / CGFloat(count)
         let instanceSize = collectionView(collectionView,
                                           layout: collectionView.collectionViewLayout,
                                           sizeForItemAt: IndexPath(item: 0, section: 0)).width
         let possibleValuesSortedDecreaseOrder = possibleValues.sorted(by: >)
-        return possibleValuesSortedDecreaseOrder.first {
-            instanceSize / CGFloat($0) >= Constants.minDotSpacing
+        let best = possibleValuesSortedDecreaseOrder.first {
+            let minSpacing = $0 == 2
+                ? Constants.minSingleSpacing
+                : Constants.minDotSpacing
+            return instanceSize / CGFloat($0) >= minSpacing
         } ?? possibleValuesSortedDecreaseOrder.last ?? 0
+        return best
     }
 }
 
