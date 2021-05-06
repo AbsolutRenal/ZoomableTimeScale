@@ -39,19 +39,29 @@ final class TimeScaleStepCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        let offsetForFirst = isFirst ? 0 : 1
-        let dotOffset = contentView.bounds.width / CGFloat(nbDots)
-        guard !dotOffset.isInfinite else {
-            return
-        }
+        CATransaction.begin()
         CATransaction.setAnimationDuration(0)
-        dotReplicator.instanceCount = nbDots - offsetForFirst
-        dotReplicator.instanceTransform = CATransform3DTranslate(CATransform3DIdentity,
-                                                                 dotOffset,
-                                                                 0,
-                                                                 0)
-        dotLayer.position = CGPoint(x: dotOffset * CGFloat(offsetForFirst),
-                                    y: contentView.bounds.midY)
+
+        if nbDots > 0 {
+            let offsetForFirst = isFirst ? 0 : 1
+            let dotOffset = contentView.bounds.width / CGFloat(nbDots)
+            guard !dotOffset.isInfinite else {
+                return
+            }
+            CATransaction.setAnimationDuration(0)
+            dotReplicator.instanceCount = nbDots - offsetForFirst
+            dotReplicator.instanceTransform = CATransform3DTranslate(CATransform3DIdentity,
+                                                                     dotOffset,
+                                                                     0,
+                                                                     0)
+            dotLayer.position = CGPoint(x: dotOffset * CGFloat(offsetForFirst),
+                                        y: contentView.bounds.midY)
+        } else if isFirst {
+                dotReplicator.instanceCount = 1
+                dotLayer.position = CGPoint(x: 0,
+                                            y: contentView.bounds.midY)
+        }
+        CATransaction.commit()
     }
 
 
@@ -67,7 +77,7 @@ final class TimeScaleStepCell: UICollectionViewCell {
         self.nbDots = nbDots
         self.isFirst = isFirst
 
-        dotLayer.isHidden = nbDots == 0
+        dotLayer.isHidden = (nbDots == 0 && !isFirst)
         timestampLabel.text = timestamp
     }
 

@@ -24,7 +24,7 @@ class ViewController: UIViewController {
 
     private func setup() {
         slider.addTarget(self, action: #selector(sliderDidChange), for: .valueChanged)
-        slider.minimumValue = 15
+        slider.minimumValue = 1
         slider.maximumValue = 800
         slider.value = 50
 

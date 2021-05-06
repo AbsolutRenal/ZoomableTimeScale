@@ -121,13 +121,24 @@ class TimeScaleView: UIView {
         }
     }
 
+    private func intermediateDots(for seconds: Int, devidedBy devider: Int) -> Int? {
+        if (CGFloat(seconds) / CGFloat(devider)).truncatingRemainder(dividingBy: 1) == 0 {
+            return devider
+        }
+        return nil
+    }
+
     private func updateScaleConfiguration() {
         switch scaleMode {
         case .multipleSeconds(let seconds):
             let nbInstances = Int((mediaDuration / Double(seconds)).rounded(.up))
             let scaleDuration = Double(nbInstances * seconds)
             let nbDots = greatestDotsNumber(forInstanceCount: nbInstances,
-                                            in: [seconds])
+                                            in: [0, seconds,
+                                                 intermediateDots(for: seconds, devidedBy: 2),
+                                                 intermediateDots(for: seconds, devidedBy: 3),
+                                                 intermediateDots(for: seconds, devidedBy: 5),
+                                            ].compactMap { $0 })
             scaleConfiguration = (nbInstances: nbInstances,
                                   nbDots: nbDots,
                                   scaleDuration: scaleDuration,
